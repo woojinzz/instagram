@@ -25,10 +25,11 @@ import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText email, password;
-    Button login;
-    TextView txt_signup;
-    FirebaseAuth auth;
+    EditText email, password;// 이메일 , 비번
+    Button login;// 로그인
+    TextView txt_signup;// 회원가입
+    FirebaseAuth auth;//인증을 위해 인스턴스 선언
+
 
 
     @Override
@@ -41,18 +42,18 @@ public class LoginActivity extends AppCompatActivity {
         login = findViewById(R.id.login);
         txt_signup = findViewById(R.id.txt_signup);
 
-        auth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();//초기화
 
-        txt_signup.setOnClickListener(new View.OnClickListener() {
+        txt_signup.setOnClickListener(new View.OnClickListener() {//회원가입 화면으로 화면전환
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
+        login.setOnClickListener(new View.OnClickListener() {//로그인 처리
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {//로딩 띄우기
                 ProgressDialog pd = new ProgressDialog(LoginActivity.this);
                 pd.setMessage("Please wait..");
                 pd.show();
@@ -71,12 +72,14 @@ public class LoginActivity extends AppCompatActivity {
                                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users")
                                                 .child(auth.getCurrentUser().getUid());
 
-                                        reference.addValueEventListener(new ValueEventListener() {
+                                        reference.addValueEventListener(new ValueEventListener() {//데이터베이스 정보 불러오기
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                //로그인 성공, 로그인한 사용자의 UI로 업뎃
                                                 pd.dismiss();
                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                //Intent.FLAG_ACTIVITY_CLEAR_TASK // 실행 액티비티 외 모두 제거
                                                 startActivity(intent);
                                                 finish();
                                             }
@@ -87,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                                             }
                                         });
                                     } else {
+                                        //로그인에 실패하면 사용자에세 메시지 표시
                                         pd.dismiss();
                                         Toast.makeText(LoginActivity.this, "로그인 실패", Toast.LENGTH_SHORT).show();
                                     }

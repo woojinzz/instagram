@@ -31,6 +31,9 @@ android {
 
 dependencies {
 
+    implementation 'de.hdodenhof:circleimageview:3.1.0' // 사진틀 (프로필사진 동그랗게)
+    implementation 'com.github.bumptech.glide:glide:4.11.0'//사진 띄우기 라이브러리 (구글)
+
     implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'com.google.firebase:firebase-database:19.6.0'
     implementation 'com.google.firebase:firebase-storage:19.2.1'
