@@ -85,20 +85,22 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()){
                             FirebaseUser firebaseUser = auth.getCurrentUser();//아이디 정보를 변수에 담기
-                            String userID = firebaseUser.getUid();
+                            String userid = firebaseUser.getUid();
 
                             //reference 초기화
-                            reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userID);
+                            reference = FirebaseDatabase.getInstance().getReference().child("Users").child(userid);
                             //chuld Users 만들고 userID
-                            HashMap<String, Object> map = new HashMap<>();
-                            map.put("id", userID);
-                            map.put("username", username.toLowerCase());
-                            map.put("fullname", fullname);
-                            map.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/instagram-bf5f6.appspot.com/o/placeholder.png?alt=media&token=4ddbd7e5-b708-4380-92f4-cf2dac2760f8");
-                            //imageurl  firebase database 에 직접 접근해서 이미지 파일 하나 업로드 해서 token 으로 받는 주소
-                            map.put("bio", "");
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("id", userid);
+                            hashMap.put("username", username.toLowerCase());
+                            hashMap.put("fullname", fullname);
+                            hashMap.put("bio", "");
+                            hashMap.put("imageurl", "https://firebasestorage.googleapis.com/v0/b/instagram-bf5f6.appspot.com/o/placeholder.png?alt=media&token=44aec345-df21-4c69-8404-0cf53d8a5697");
 
-                            reference.setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+
+
+                            reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
