@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
                     switch (item.getItemId()){
 
                         case  R.id.nav_home://홈 화면
-
                             selectedFragment = new HomeFragment();
 
                             break;
