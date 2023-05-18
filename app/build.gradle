@@ -36,8 +36,7 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.11.0'//사진 띄우기 라이브러리 (구글)
 
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'//사진편집 외부 라이브러리
-
+    //implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'//사진편집 외부 라이브러리 //오류****
 
     implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'com.google.firebase:firebase-database:19.6.0'
