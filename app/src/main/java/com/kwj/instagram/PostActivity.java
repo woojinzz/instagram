@@ -68,9 +68,9 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-//        CropImage.activity() //CropImage 엑티비티 실행
-//                .setAspectRatio(1, 1)
-//                .start(PostActivity.this);
+        CropImage.activity() //CropImage 엑티비티 실행
+                .setAspectRatio(1, 1)
+                .start(PostActivity.this);
     }
 
     private String getFileExtension(Uri uri){//파일 확장자 찾기
@@ -140,18 +140,18 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            imageUri = result.getUri();
-//            image_added.setImageURI(imageUri);
-//        } else {
-//            Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
-//            startActivity(new Intent(PostActivity.this, MainActivity.class));
-//            finish();
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            imageUri = result.getUri();
+            image_added.setImageURI(imageUri);
+        } else {
+            Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(PostActivity.this, MainActivity.class));
+            finish();
+        }
+    }
 }
