@@ -1,12 +1,8 @@
 package com.kwj.instagram;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
-import android.net.Credentials;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +11,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,21 +24,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
 
-    Uri imageUri;
-    String myUrl = "";
-    UploadTask uploadTask;
-    StorageReference storageReference;//파일 업로드 위한
+    private Uri mImageUri;
+    String miUrlOk = "";
+    private StorageTask uploadTask;
+    StorageReference storageRef;
+
+    private ProgressDialog pd;
 
     ImageView close, image_added;
     TextView post;
     EditText description;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +53,11 @@ public class PostActivity extends AppCompatActivity {
         post = findViewById(R.id.post);
         description = findViewById(R.id.description);
 
-        storageReference = FirebaseStorage.getInstance().getReference("posts");//FirebaseStorage 참조
+        storageRef = FirebaseStorage.getInstance().getReference("posts");
 
-        close.setOnClickListener(new View.OnClickListener() {//close 클릭시 메인으로 넘어감
+        close.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 startActivity(new Intent(PostActivity.this, MainActivity.class));
                 finish();
             }
@@ -63,91 +65,98 @@ public class PostActivity extends AppCompatActivity {
 
         post.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {// uploadImage() 메서드 실행
-                uploadImage();
+            public void onClick(View view) {
+                uploadImage_10();
             }
         });
 
-        CropImage.activity() //CropImage 엑티비티 실행
-                .setAspectRatio(1, 1)
+
+        CropImage.activity()
+                .setAspectRatio(1,1)
                 .start(PostActivity.this);
     }
 
-    private String getFileExtension(Uri uri){//파일 확장자 찾기
-        android.webkit.MimeTypeMap.getSingleton();
-        String extension = MimeTypeMap.getFileExtensionFromUrl(String.valueOf(uri));
-        return extension;
+    private String getFileExtension(Uri uri){
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    private void  uploadImage(){//업로드 실행중 보여질 다이얼로그 생성
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Posting");
-        progressDialog.show();
+    private void uploadImage_10(){
+        pd = new ProgressDialog(this);
+        pd.setMessage("Posting");
+        pd.show();
+        if (mImageUri != null){
+            final StorageReference fileReference = storageRef.child(System.currentTimeMillis()
+                    + "." + getFileExtension(mImageUri));
 
-        if (imageUri != null){//이미지 선택시 스토리지에 저장
-            StorageReference filereference = storageReference.child(System.currentTimeMillis()
-                    + "." + getFileExtension(imageUri));//시스템 시간, 파일타입
-
-            uploadTask = filereference.putFile(imageUri);
-            uploadTask.continueWithTask(new Continuation() {//이미지 다운로드 url 받아오기
+            uploadTask = fileReference.putFile(mImageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public Object then(@NonNull Task task) throws Exception {//예외처리
-                    if (!task.isSuccessful()){
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-
-                    return filereference.getDownloadUrl();//return 값으로 다운로드 url
+                    return fileReference.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        myUrl = downloadUri.toString(); //스토리지 업로드 주소 받기
+                        miUrlOk = downloadUri.toString();
 
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");//참조 생성
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
 
-                        String postid = reference.push().getKey();//참조키 받기
+                        String postid = reference.push().getKey();
 
-                        HashMap<String, Object> hashMap = new HashMap<>();// 키 값 넣기
+                        HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("postid", postid);
-                        hashMap.put("postimage", myUrl);
+                        hashMap.put("postimage", miUrlOk);
                         hashMap.put("description", description.getText().toString());
                         hashMap.put("publisher", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                         reference.child(postid).setValue(hashMap);
 
-                        progressDialog.dismiss();//다이얼로그 종료
+                        pd.dismiss();
 
-                        startActivity(new Intent(PostActivity.this, MainActivity.class));//메인으로 넘김
+                        startActivity(new Intent(PostActivity.this, MainActivity.class));
                         finish();
+
                     } else {
-                        Toast.makeText(PostActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PostActivity.this, "Failed", Toast.LENGTH_SHORT).show();
                     }
                 }
-            }).addOnFailureListener(new OnFailureListener() {//이미지업로드 실패시 메시지 출력
+            }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(PostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
 
         } else {
-            Toast.makeText(this, "No ImageSelected!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PostActivity.this, "No image selected", Toast.LENGTH_SHORT).show();
         }
-
-
-
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onPause() {
+        super.onPause();
+        if (pd != null && pd.isShowing()) {
+            pd.dismiss();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            imageUri = result.getUri();
-            image_added.setImageURI(imageUri);
+            mImageUri = result.getUri();
+
+            image_added.setImageURI(mImageUri);
         } else {
             Toast.makeText(this, "Something gone wrong!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(PostActivity.this, MainActivity.class));

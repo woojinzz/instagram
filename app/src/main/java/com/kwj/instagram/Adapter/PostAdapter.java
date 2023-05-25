@@ -59,8 +59,23 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         }
 
         publisherInfo(holder.image_profile, holder.username, holder.publisher, post.getPublisher());
+        isLiked(post.getPostid(), holder.like);//출력값, 입력값
+        nrLikes(holder.likes, post.getPostid());//입력값, 출력값
 
-
+        holder.like.setOnClickListener(new View.OnClickListener() {//좋아요 이미지 클릭시
+            @Override
+            public void onClick(View v) {
+                if (holder.like.getTag().equals("like")){//이미지 태그값이 like 이면
+                    FirebaseDatabase.getInstance().getReference().child("Likes")//db에 likes path
+                            .child(post.getPostid())//포스팅 id
+                            .child(firebaseUser.getUid()).setValue(true);//사용자 본인 생성
+                } else {
+                    FirebaseDatabase.getInstance().getReference().child("Likes")//db에 likes path
+                            .child(post.getPostid())//포스팅 id
+                            .child(firebaseUser.getUid()).removeValue();//사용자 본인 삭제(좋아요 해제)
+                }
+            }
+        });
     }
 
     @Override
@@ -90,6 +105,52 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
         }
     }
+
+    private void isLiked(String postid, ImageView imageView){
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();//파베 유저 인스턴스
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()//db 참조
+                .child("Likes")//Likes path
+                .child(postid);//Lokes 하위에 포스팅 id
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.child(firebaseUser.getUid()).exists()){//포스팅 id path에 사용자 정보 있으면
+                    imageView.setImageResource(R.drawable.ic_liked);//이미지 변환
+                    imageView.setTag("liked");
+                } else {
+                    imageView.setImageResource(R.drawable.ic_like);
+                    imageView.setTag("like");
+                }
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void nrLikes(TextView likes, String postid){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference()
+                .child("Likes").child(postid);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {//counting 될 TextView 에 갯수 세어 String 출력
+                likes.setText(snapshot.getChildrenCount() + "likes");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void publisherInfo (ImageView image_profile, TextView username, TextView publisher, String userid){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 

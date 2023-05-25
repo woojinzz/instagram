@@ -7,6 +7,7 @@ android {
     namespace 'com.kwj.instagram'
     compileSdk 33
 
+
     defaultConfig {
         applicationId "com.kwj.instagram"
         minSdk 26
@@ -31,21 +32,39 @@ android {
 
 dependencies {
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'de.hdodenhof:circleimageview:3.1.0'// 사진틀 (프로필사진 동그랗게)
+    implementation 'com.google.firebase:firebase-auth:22.0.0' // Firebase Authentication
+    implementation platform('com.google.firebase:firebase-bom:32.0.0') // Firebase BOM (Bill of Materials)
+    implementation 'com.google.firebase:firebase-storage:20.2.0' // Firebase Cloud Storage
+    implementation 'com.google.firebase:firebase-firestore:24.6.0' // Firebase Cloud Firestore
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1' // OkHttp HTTP client
+    implementation 'com.google.code.gson:gson:2.9.0' // Gson JSON library
+    implementation 'androidx.multidex:multidex:2.0.1' // Multidex support for Android
+    implementation 'com.google.firebase:firebase-messaging:23.1.2' // Firebase Cloud Messaging
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0' // Retrofit HTTP client
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0' // Gson converter for Retrofit
+    implementation 'com.google.firebase:firebase-appcheck:17.0.0' // Firebase App Check
+    implementation 'com.google.firebase:firebase-database:20.2.1' // Firebase Realtime Database
+    implementation 'com.google.firebase:firebase-inappmessaging:20.3.2' // Firebase In-App Messaging
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.3.2' // Firebase In-App Messaging Display
+    implementation 'com.google.firebase:firebase-analytics:21.2.2' // Firebase Analytics
 
-    implementation 'com.github.bumptech.glide:glide:4.11.0'//사진 띄우기 라이브러리 (구글)
+    implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1' // Google Play Services Ads Identifier
 
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'//사진편집 외부 라이브러리 //오류****
+    implementation fileTree(dir: 'libs', include: ['*.jar']) // Local jar files
+    implementation 'com.google.android.material:material:1.9.0' // Material Design components
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4' // ConstraintLayout
+    implementation 'com.github.bumptech.glide:glide:4.14.2' // Glide image loading library
+    implementation 'de.hdodenhof:circleimageview:3.1.0' // Circular ImageView
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0' // Image cropping library
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'// MaterialEditText library
+    implementation 'com.github.shts:StoriesProgressView:3.0.0' // StoriesProgressView library
+    implementation 'com.github.pwittchen:swipe-rx2:0.3.0' // Swipe gesture library
 
-    implementation 'com.google.firebase:firebase-auth:20.0.1'
-    implementation 'com.google.firebase:firebase-database:19.6.0'
-    implementation 'com.google.firebase:firebase-storage:19.2.1'
+    testImplementation 'junit:junit:4.13.2' // JUnit testing framework
+    androidTestImplementation 'androidx.test:runner:1.5.2' // AndroidX test runner
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1' // Espresso UI testing framework
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1' // androidx로 변경
+    implementation 'com.google.android.material:material:1.9.0' // androidx로 변경
 }
+apply plugin: 'com.google.gms.google-services'
