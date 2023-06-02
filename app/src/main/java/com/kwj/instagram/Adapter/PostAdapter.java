@@ -1,6 +1,7 @@
 package com.kwj.instagram.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.kwj.instagram.CommentsActivity;
 import com.kwj.instagram.Model.Post;
 import com.kwj.instagram.Model.User;
 import com.kwj.instagram.R;
@@ -83,6 +85,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//
                 }
             }
         });
+
+        holder.comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, CommentsActivity.class);
+                intent.putExtra("postid", post.getPostid());
+                intent.putExtra("publisherid", post.getPublisher());
+                mContext.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -155,6 +168,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void getCommetns(String postId, final TextView comments){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Comments").child(postId);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                comments.setText("View All "+dataSnapshot.getChildrenCount()+" Comments");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
