@@ -24,14 +24,14 @@ import com.kwj.instagram.R;
 
 import java.util.List;
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//Adapter 상속
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>{//Adapter 상속
 
     public Context mContext;
     public List<Post> mPost;
 
     private FirebaseUser firebaseUser;
 
-    public PostAdapter(Context mContext, List<Post> mPost) {
+    public CommentAdapter(Context mContext, List<Post> mPost) {
         this.mContext = mContext;
         this.mPost = mPost;
     }
@@ -41,7 +41,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {//리소스 파일과 연결
         // ViewHolder 객체를 생성하고 뷰를 연결하는 부분
         View view = LayoutInflater.from(mContext).inflate(R.layout.post_item, parent, false);
-        return new PostAdapter.ViewHolder(view);
+        return new CommentAdapter.ViewHolder(view);
 
     }
 
