@@ -29,6 +29,8 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+        <activity android:name=".CommentsActivity"/>
+
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />

@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.kwj.instagram.Model.Comment;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.kwj.instagram.Adapter.CommentAdapter;
 import com.kwj.instagram.Model.User;
 
-import org.w3c.dom.Comment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,9 +50,12 @@ public class CommentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
-        // 툴바 설정
+         //툴바 설정
         Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+        //setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Comments");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -61,11 +64,6 @@ public class CommentsActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-        // 인텐트로 전달받은 데이터 가져오기
-        Intent intent = getIntent();
-        postid = intent.getStringExtra("postid");
-        publisherid = intent.getStringExtra("publisherid");
 
         // RecyclerView 초기화 및 어댑터 설정
         recyclerView = findViewById(R.id.recycler_view);
@@ -77,9 +75,15 @@ public class CommentsActivity extends AppCompatActivity {
         recyclerView.setAdapter(commentAdapter);
 
         // 댓글 작성 관련 뷰 초기화
-        post = findViewById(R.id.post);
         addcomment = findViewById(R.id.add_comment);
         image_profile = findViewById(R.id.image_profile);
+        post = findViewById(R.id.post);
+
+        // 인텐트로 전달받은 데이터 가져오기
+        Intent intent = getIntent();
+        postid = intent.getStringExtra("postid");
+        publisherid = intent.getStringExtra("publisherid");
+
 
         // 현재 사용자 정보 가져오기
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

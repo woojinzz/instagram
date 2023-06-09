@@ -69,6 +69,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//
         isLiked(post.getPostid(), holder.like);//출력값, 입력값
         // 좋아요 개수 표시
         nrLikes(holder.likes, post.getPostid());//입력값, 출력값
+        getCommetns(post.getPostid(), holder.comments);
+
 
         holder.like.setOnClickListener(new View.OnClickListener() {//좋아요 이미지 클릭시
             @Override
@@ -86,9 +88,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//
             }
         });
 
+
+
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(mContext, CommentsActivity.class);
+                intent.putExtra("postid", post.getPostid());
+                intent.putExtra("publisherid", post.getPublisher());
+                mContext.startActivity(intent);
+            }
+        });
+        holder.comments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent = new Intent(mContext, CommentsActivity.class);
                 intent.putExtra("postid", post.getPostid());
                 intent.putExtra("publisherid", post.getPublisher());
@@ -122,9 +135,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{//
             description = itemView.findViewById(R.id.description);
             comments = itemView.findViewById(R.id.comments);
 
-
         }
     }
+
 
     private void isLiked(String postid, ImageView imageView){//좋아요 이미지 변경
 
